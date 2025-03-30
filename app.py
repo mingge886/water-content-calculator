@@ -11,6 +11,10 @@ if "data" not in st.session_state:
     st.session_state.data = []  # 用于存储生成的数据
 if "current_id" not in st.session_state:
     st.session_state.current_id = 1  # 序号从 1 开始
+if "value1" not in st.session_state:
+    st.session_state.value1 = ""  # 水分值1
+if "value2" not in st.session_state:
+    st.session_state.value2 = ""  # 水分值2
 
 # 随机生成数据的函数
 def generate_data_and_calculate(current_id):
@@ -48,24 +52,17 @@ def generate_data():
         st.session_state.current_id += 1  # 序号递增
 
 # 计算平均值的函数
-def calculate_average(value1, value2):
-    return round((value1 + value2) / 2, 1)
-
-# 嵌入 JavaScript 监听快捷键
-st.markdown("""
-    <script>
-    document.addEventListener("keydown", function(event) {
-        if (event.key === "Enter") {
-            // 模拟点击生成数据按钮
-            const generateButton = window.parent.document.querySelector('button[aria-label="生成数据"]');
-            if (generateButton) generateButton.click();
-        }
-    });
-    </script>
-""", unsafe_allow_html=True)
+def calculate_average():
+    try:
+        value1 = float(st.session_state.value1)
+        value2 = float(st.session_state.value2)
+        average = round((value1 + value2) / 2, 1)
+        st.session_state.average_result = f"平均修约值: {average}"
+    except ValueError:
+        st.session_state.average_result = "请输入有效的数字！"
 
 # 生成数据按钮
-if st.button("生成数据", key="generate"):
+if st.button("生成数据"):
     generate_data()
 
 # 显示数据表格
@@ -89,9 +86,23 @@ if st.session_state.data:
 
 # 输入框和计算平均值
 st.subheader("计算平均值")
-value1 = st.number_input("水分值1", min_value=0.0, format="%.2f")
-value2 = st.number_input("水分值2", min_value=0.0, format="%.2f")
 
-if st.button("计算平均值", key="calculate"):
-    average = calculate_average(value1, value2)
-    st.success(f"平均修约值: {average}")
+# 水分值1输入框
+st.text_input(
+    "水分值1",
+    key="value1",
+    placeholder="请输入水分值1",
+    on_change=lambda: st.session_state.value2_focus.request_focus()
+)
+
+# 水分值2输入框
+st.text_input(
+    "水分值2",
+    key="value2",
+    placeholder="请输入水分值2",
+    on_change=calculate_average
+)
+
+# 显示计算结果
+if "average_result" in st.session_state:
+    st.success(st.session_state.average_result)
