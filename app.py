@@ -15,6 +15,8 @@ if "value1" not in st.session_state:
     st.session_state.value1 = ""  # 水分值1
 if "value2" not in st.session_state:
     st.session_state.value2 = ""  # 水分值2
+if "average_result" not in st.session_state:
+    st.session_state.average_result = ""  # 平均值结果
 
 # 随机生成数据的函数
 def generate_data_and_calculate(current_id):
@@ -52,8 +54,14 @@ def generate_data():
         st.session_state.current_id += 1  # 序号递增
 
 # 计算平均值的函数
-def calculate_average(value1, value2):
-    return round((value1 + value2) / 2, 1)
+def calculate_average():
+    try:
+        value1 = float(st.session_state.value1)
+        value2 = float(st.session_state.value2)
+        average = round((value1 + value2) / 2, 1)
+        st.session_state.average_result = f"平均修约值: {average}"
+    except ValueError:
+        st.session_state.average_result = "请输入有效的数字！"
 
 # 生成数据按钮
 if st.button("生成数据"):
@@ -81,35 +89,21 @@ if st.session_state.data:
 # 输入框和计算平均值
 st.subheader("计算平均值")
 
-# 水分值1输入框
-value1 = st.text_input("水分值1", value=st.session_state.value1, placeholder="请输入水分值1", key="value1")
+# 水分值1输入框（回车无操作）
+st.text_input(
+    "水分值1",
+    key="value1",
+    placeholder="请输入水分值1"
+)
 
-# 水分值2输入框
-value2 = st.text_input("水分值2", value=st.session_state.value2, placeholder="请输入水分值2", key="value2")
+# 水分值2输入框（回车触发计算平均值）
+st.text_input(
+    "水分值2",
+    key="value2",
+    placeholder="请输入水分值2",
+    on_change=calculate_average
+)
 
-if st.button("计算平均值"):
-    try:
-        # 转换输入值为浮点数
-        value1 = float(value1)
-        value2 = float(value2)
-        average = calculate_average(value1, value2)
-        st.success(f"平均修约值: {average}")
-    except ValueError:
-        st.error("请输入有效的数字！")
-
-# 嵌入 JavaScript 监听表格点击事件
-st.markdown("""
-    <script>
-    document.addEventListener("click", function(event) {
-        const target = event.target;
-        if (target.tagName === "TD") {  // 检查是否点击了表格中的单元格
-            const value = target.innerText;
-            const input = window.parent.document.querySelector('input[data-testid="stTextInput"][aria-label="水分值1"]');
-            if (input) {
-                input.value = value;  // 将单元格的值填入水分值1输入框
-                input.dispatchEvent(new Event('input', { bubbles: true }));  // 触发输入事件
-            }
-        }
-    });
-    </script>
-""", unsafe_allow_html=True)
+# 显示计算结果
+if st.session_state.average_result:
+    st.success(st.session_state.average_result)
