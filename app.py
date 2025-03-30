@@ -57,8 +57,8 @@ def calculate_average():
     st.success(f"平均修约值: {average}")
 
 # 生成数据按钮
-if st.button("生成数据 (Enter)", on_click=generate_data):
-    pass
+if st.button("生成数据"):
+    generate_data()
 
 # 显示数据表格
 if st.session_state.data:
@@ -97,12 +97,21 @@ st.session_state.value2 = st.number_input(
 )
 
 # 计算平均值按钮
-if st.button("计算平均值 (空格)", on_click=calculate_average):
-    pass
+if st.button("计算平均值"):
+    calculate_average()
 
-# 添加快捷键功能
+# 添加隐藏的快捷键输入框
+shortcut = st.text_input("快捷键输入框 (隐藏)", value="", key="shortcut", label_visibility="hidden")
+
+# 根据快捷键触发操作
+if shortcut == "Enter":
+    generate_data()
+    st.session_state.shortcut = ""  # 清空输入框
+elif shortcut == " ":
+    calculate_average()
+    st.session_state.shortcut = ""  # 清空输入框
+
+# 添加快捷键说明
 st.text("快捷键说明：")
-st.text("1. 按 Enter 键生成数据")
-st.text("2. 左键点击表格中的水分X(%)列自动填入水分值1")
-st.text("3. 在页面直接输入数字填入水分值2")
-st.text("4. 按空格键计算平均值")
+st.text("1. 输入 'Enter' 生成数据")
+st.text("2. 输入 '空格' 计算平均值")
