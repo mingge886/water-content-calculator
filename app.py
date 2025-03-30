@@ -3,9 +3,14 @@ import pandas as pd
 import streamlit as st
 import io  # 用于创建字节流对象
 
-# 初始化数据存储
-data = []
-current_id = 1  # 序号从 1 开始
+# 初始化 Streamlit 页面标题
+st.title("水分计算器")
+
+# 初始化数据存储和序号
+if "data" not in st.session_state:
+    st.session_state.data = []  # 用于存储生成的数据
+if "current_id" not in st.session_state:
+    st.session_state.current_id = 1  # 序号从 1 开始
 
 # 随机生成数据的函数
 def generate_data_and_calculate(current_id):
@@ -36,19 +41,15 @@ def generate_data_and_calculate(current_id):
         "水分X(%)": x
     }
 
-# Streamlit 页面标题
-st.title("水分计算器")
-
 # 生成数据按钮
 if st.button("生成数据"):
-    global current_id
     for _ in range(10):  # 一次生成 10 个数据
-        data.append(generate_data_and_calculate(current_id))
-        current_id += 1
+        st.session_state.data.append(generate_data_and_calculate(st.session_state.current_id))
+        st.session_state.current_id += 1  # 序号递增
 
 # 显示数据表格
-if data:
-    df = pd.DataFrame(data)
+if st.session_state.data:
+    df = pd.DataFrame(st.session_state.data)
     st.dataframe(df)
 
     # 创建字节流对象
