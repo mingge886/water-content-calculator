@@ -15,6 +15,8 @@ if "value1" not in st.session_state:
     st.session_state.value1 = ""  # 水分值1
 if "value2" not in st.session_state:
     st.session_state.value2 = ""  # 水分值2
+if "average_result" not in st.session_state:
+    st.session_state.average_result = ""  # 平均值结果
 
 # 随机生成数据的函数
 def generate_data_and_calculate(current_id):
@@ -87,15 +89,14 @@ if st.session_state.data:
 # 输入框和计算平均值
 st.subheader("计算平均值")
 
-# 水分值1输入框
+# 水分值1输入框（回车无操作）
 st.text_input(
     "水分值1",
     key="value1",
-    placeholder="请输入水分值1",
-    on_change=lambda: st.session_state.value2_focus.request_focus()
+    placeholder="请输入水分值1"
 )
 
-# 水分值2输入框
+# 水分值2输入框（回车触发计算平均值）
 st.text_input(
     "水分值2",
     key="value2",
@@ -104,5 +105,5 @@ st.text_input(
 )
 
 # 显示计算结果
-if "average_result" in st.session_state:
+if st.session_state.average_result:
     st.success(st.session_state.average_result)
