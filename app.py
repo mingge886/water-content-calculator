@@ -76,9 +76,10 @@ if st.session_state.data:
 
 # 输入框和计算平均值
 st.subheader("计算平均值")
-value1 = st.number_input("水分值1", min_value=0.0, format="%.2f")
-value2 = st.number_input("水分值2", min_value=0.0, format="%.2f")
+value1 = st.number_input("水分值1", min_value=0.0, format="%.2f", key="value1")
+value2 = st.number_input("水分值2", min_value=0.0, format="%.2f", key="value2")
 
 if st.button("计算平均值"):
-    average = calculate_average(value1, value2)
-    st.success(f"平均修约值: {average}")
+    if "value1" in st.session_state and "value2" in st.session_state:
+        average = calculate_average(st.session_state.value1, st.session_state.value2)
+        st.success(f"平均修约值: {average}")
