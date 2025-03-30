@@ -4,7 +4,7 @@ import streamlit as st
 import io  # 用于创建字节流对象
 
 # 初始化 Streamlit 页面标题
-st.title("水分计算器")
+st.title("水分计算器（成品）")
 
 # 初始化数据存储和序号
 if "data" not in st.session_state:
@@ -64,7 +64,7 @@ def calculate_average():
         st.session_state.average_result = "请输入有效的数字！"
 
 # 生成数据按钮
-if st.button("生成数据"):
+if st.button("生成数据（10个）"):
     generate_data()
 
 # 显示数据表格
@@ -91,14 +91,14 @@ st.subheader("计算平均值")
 
 # 水分值1输入框（回车无操作）
 st.text_input(
-    "水分值1",
+    "水分1",
     key="value1",
     placeholder="请输入水分值1"
 )
 
 # 水分值2输入框（回车触发计算平均值）
 st.text_input(
-    "水分值2",
+    "水分2",
     key="value2",
     placeholder="请输入水分值2",
     on_change=calculate_average
