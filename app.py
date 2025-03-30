@@ -1,6 +1,7 @@
 import random
 import pandas as pd
 import streamlit as st
+import io  # 用于创建字节流对象
 
 # 初始化数据存储
 data = []
@@ -46,10 +47,16 @@ if data:
     df = pd.DataFrame(data)
     st.dataframe(df)
 
-    # 导出数据为 Excel
+    # 创建字节流对象
+    output = io.BytesIO()
+    with pd.ExcelWriter(output, engine="openpyxl") as writer:
+        df.to_excel(writer, index=False)
+    output.seek(0)  # 将指针移动到文件开头
+
+    # 使用字节流对象作为下载数据
     st.download_button(
         label="导出数据为 Excel",
-        data=df.to_excel(index=False, engine="openpyxl"),
+        data=output,
         file_name="导出数据.xlsx",
         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
