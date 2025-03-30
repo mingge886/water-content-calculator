@@ -35,7 +35,7 @@ def generate_data_and_calculate(current_id):
     m2 = round(random.uniform(m2_min, m1), 4)  # 随机生成 m2，范围 [m2_min, m1]
     
     # 计算水分 X(%)
-    x = round(((m1 - m2) / (m1 - m3)) * 100, 2)
+    x = round(((m1 - m2) / (m1 - m3)) * 100:.2f)
     
     # 返回结果
     return {
