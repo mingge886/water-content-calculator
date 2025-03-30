@@ -11,10 +11,6 @@ if "data" not in st.session_state:
     st.session_state.data = []  # 用于存储生成的数据
 if "current_id" not in st.session_state:
     st.session_state.current_id = 1  # 序号从 1 开始
-if "value1" not in st.session_state:
-    st.session_state.value1 = 0.0  # 水分值1
-if "value2" not in st.session_state:
-    st.session_state.value2 = 0.0  # 水分值2
 
 # 随机生成数据的函数
 def generate_data_and_calculate(current_id):
@@ -52,9 +48,8 @@ def generate_data():
         st.session_state.current_id += 1  # 序号递增
 
 # 计算平均值的函数
-def calculate_average():
-    average = round((st.session_state.value1 + st.session_state.value2) / 2, 1)
-    st.success(f"平均修约值: {average}")
+def calculate_average(value1, value2):
+    return round((value1 + value2) / 2, 1)
 
 # 生成数据按钮
 if st.button("生成数据"):
@@ -63,13 +58,13 @@ if st.button("生成数据"):
 # 显示数据表格
 if st.session_state.data:
     df = pd.DataFrame(st.session_state.data)
-    st.dataframe(df, use_container_width=True)  # 隐藏默认索引
+    st.dataframe(df, use_container_width=True)
 
     # 创建字节流对象
     output = io.BytesIO()
     with pd.ExcelWriter(output, engine="openpyxl") as writer:
         df.to_excel(writer, index=False)
-    output.seek(0)  # 将指针移动到文件开头
+    output.seek(0)
 
     # 使用字节流对象作为下载数据
     st.download_button(
@@ -79,39 +74,11 @@ if st.session_state.data:
         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
 
-# 计算平均值
-st.subheader("计算水分平均值")
+# 输入框和计算平均值
+st.subheader("计算平均值")
+value1 = st.number_input("水分值1", min_value=0.0, format="%.2f")
+value2 = st.number_input("水分值2", min_value=0.0, format="%.2f")
 
-# 水分值1输入框
-st.session_state.value1 = st.number_input(
-    "水分值1 (点击表格中的水分X(%)自动填入)", 
-    value=st.session_state.value1, 
-    format="%.2f"
-)
-
-# 水分值2输入框
-st.session_state.value2 = st.number_input(
-    "水分值2 (直接输入数字自动填入)", 
-    value=st.session_state.value2, 
-    format="%.2f"
-)
-
-# 计算平均值按钮
 if st.button("计算平均值"):
-    calculate_average()
-
-# 添加隐藏的快捷键输入框
-shortcut = st.text_input("快捷键输入框 (隐藏)", value="", key="shortcut", label_visibility="hidden")
-
-# 根据快捷键触发操作
-if shortcut == "Enter":
-    generate_data()
-    st.session_state.shortcut = ""  # 清空输入框
-elif shortcut == " ":
-    calculate_average()
-    st.session_state.shortcut = ""  # 清空输入框
-
-# 添加快捷键说明
-st.text("快捷键说明：")
-st.text("1. 输入 'Enter' 生成数据")
-st.text("2. 输入 '空格' 计算平均值")
+    average = calculate_average(value1, value2)
+    st.success(f"平均修约值: {average}")
