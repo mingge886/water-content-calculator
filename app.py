@@ -11,6 +11,10 @@ if "data" not in st.session_state:
     st.session_state.data = []  # 用于存储生成的数据
 if "current_id" not in st.session_state:
     st.session_state.current_id = 1  # 序号从 1 开始
+if "value1" not in st.session_state:
+    st.session_state.value1 = 0.0  # 水分值1
+if "value2" not in st.session_state:
+    st.session_state.value2 = 0.0  # 水分值2
 
 # 随机生成数据的函数
 def generate_data_and_calculate(current_id):
@@ -41,16 +45,25 @@ def generate_data_and_calculate(current_id):
         "水分X(%)": x
     }
 
-# 生成数据按钮
-if st.button("生成数据"):
+# 生成数据的函数
+def generate_data():
     for _ in range(10):  # 一次生成 10 个数据
         st.session_state.data.append(generate_data_and_calculate(st.session_state.current_id))
         st.session_state.current_id += 1  # 序号递增
 
+# 计算平均值的函数
+def calculate_average():
+    average = round((st.session_state.value1 + st.session_state.value2) / 2, 1)
+    st.success(f"平均修约值: {average}")
+
+# 生成数据按钮
+if st.button("生成数据 (Enter)", on_click=generate_data):
+    pass
+
 # 显示数据表格
 if st.session_state.data:
     df = pd.DataFrame(st.session_state.data)
-    st.dataframe(df)
+    st.dataframe(df, use_container_width=True)  # 隐藏默认索引
 
     # 创建字节流对象
     output = io.BytesIO()
@@ -68,9 +81,28 @@ if st.session_state.data:
 
 # 计算平均值
 st.subheader("计算水分平均值")
-value1 = st.number_input("输入水分值1", min_value=0.0, format="%.2f")
-value2 = st.number_input("输入水分值2", min_value=0.0, format="%.2f")
 
-if st.button("计算平均值"):
-    average = round((value1 + value2) / 2, 1)
-    st.success(f"平均修约值: {average}")
+# 水分值1输入框
+st.session_state.value1 = st.number_input(
+    "水分值1 (点击表格中的水分X(%)自动填入)", 
+    value=st.session_state.value1, 
+    format="%.2f"
+)
+
+# 水分值2输入框
+st.session_state.value2 = st.number_input(
+    "水分值2 (直接输入数字自动填入)", 
+    value=st.session_state.value2, 
+    format="%.2f"
+)
+
+# 计算平均值按钮
+if st.button("计算平均值 (空格)", on_click=calculate_average):
+    pass
+
+# 添加快捷键功能
+st.text("快捷键说明：")
+st.text("1. 按 Enter 键生成数据")
+st.text("2. 左键点击表格中的水分X(%)列自动填入水分值1")
+st.text("3. 在页面直接输入数字填入水分值2")
+st.text("4. 按空格键计算平均值")
