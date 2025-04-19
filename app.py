@@ -30,7 +30,7 @@ def generate_data_and_calculate(current_id):
     m1 = round(m3 + m0, 4)
     
     # 确保 X ≤ 8%，计算 m2 的范围
-    max_x = 8  # 最大水分百分比
+    max_x = 15  # 最大水分百分比
     m2_min = m1 - (max_x / 100) * (m1 - m3)  # 根据公式反推 m2 的最小值
     m2 = round(random.uniform(m2_min, m1), 4)  # 随机生成 m2，范围 [m2_min, m1]
     
