@@ -49,7 +49,7 @@ def generate_data_and_calculate(current_id):
 
 # 生成数据的函数
 def generate_data():
-    for _ in range(10):  # 一次生成 10 个数据
+    for _ in range(100):  # 一次生成 10 个数据
         st.session_state.data.append(generate_data_and_calculate(st.session_state.current_id))
         st.session_state.current_id += 1  # 序号递增
 
@@ -64,7 +64,7 @@ def calculate_average():
         st.session_state.average_result = "请输入有效的数字！"
 
 # 生成数据按钮
-if st.button("生成数据（10个）"):
+if st.button("生成数据（100个）"):
     generate_data()
 
 # 显示数据表格
